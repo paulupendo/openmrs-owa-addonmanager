@@ -1,7 +1,7 @@
 import fetchPolyfill from 'whatwg-fetch';
 
 const applicationDistribution = location.href.split('/')[3];
-const apiBaseUrl = `/${applicationDistribution}/ws/rest/v1`; 
+let apiBaseUrl = `/${applicationDistribution}/ws/rest/v1`; 
 
 export class ApiHelper {
   constructor(requestLibrary) {
@@ -23,13 +23,23 @@ export class ApiHelper {
     const contentTypeHeader = 'application/json';
 
     if (requestType != 'GET'){
-      options = {
-        method: requestType,
-        headers: {
-          "Content-Type": contentTypeHeader
-        },
-        body: JSON.stringify(requestData)
-      };
+      if(requestData.file.type === 'application/zip') {
+        options = {
+          method: requestType,
+          headers: {
+            "Content-Type": 'application/zip'
+          },
+          body: requestData
+        };
+      } else {
+        options = {
+          method: requestType,
+          headers: {
+            "Content-Type": contentTypeHeader
+          },
+          body: JSON.stringify(requestData)
+        };
+      }
     }
     this.requestOptions = Object.assign({}, this.requestOptions, options);
     return this;
@@ -37,6 +47,8 @@ export class ApiHelper {
 
   send() {
     const request = this.requestLibrary;
+    this.requestUrl === '/owa/applist' ? apiBaseUrl = `/${applicationDistribution}/ws/rest` : null;
+    this.requestUrl === '/owa/addapp' ? apiBaseUrl = `/${applicationDistribution}/ws/rest` : null;
     const response = request(`${apiBaseUrl}${this.requestUrl}`, this.requestOptions)
       .then((data)=>{
         return this.mocked ? data : data.json();
