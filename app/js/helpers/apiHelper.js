@@ -20,10 +20,11 @@ export class ApiHelper {
 
     this.requestUrl = requestUrl;
     let options = {};
-    const contentTypeHeader = 'application/json';
+    // const contentTypeHeader = 'application/json';
 
     if (requestType != 'GET'){
-      if(requestData.file.type === 'application/zip') {
+      if(requestData) {
+        console.log(requestData);
         options = {
           method: requestType,
           headers: {
@@ -34,10 +35,10 @@ export class ApiHelper {
       } else {
         options = {
           method: requestType,
-          headers: {
-            "Content-Type": contentTypeHeader
-          },
-          body: JSON.stringify(requestData)
+          // headers: {
+          //   "Content-Type": contentTypeHeader
+          // },
+          body: requestData
         };
       }
     }
@@ -51,7 +52,7 @@ export class ApiHelper {
     this.requestUrl === '/owa/addapp' ? apiBaseUrl = `/${applicationDistribution}/ws/rest` : null;
     const response = request(`${apiBaseUrl}${this.requestUrl}`, this.requestOptions)
       .then((data)=>{
-        return this.mocked ? data : data.json();
+        return data;
       })
       .catch((error)=> {
         return error;

@@ -26,14 +26,50 @@ export default class ManageApps extends React.Component {
     const addonFile = document.getElementById('fileInput').files[0];
       
     const apiHelper = new ApiHelper(null);
-    let query = {
-      file: addonFile,
-      name: AddAddon.name
-    };
-    apiHelper.post('/owa/addapp', query).then(response => {
-      // console.log(addonFile, 'addonFile');
-      // console.log(response, 'response');
+    let query = addonFile;
+
+    // let data = {
+    //   name: query.name,
+    //   size: query.size,
+    //   type: query.type
+    // };
+
+    // apiHelper.post('/owa/addapp', addonFile).then(response => {
+    //   // console.log(addonFile, 'addonFile');
+    //   // console.log(response, 'response');
+    //   console.log("gehre", response);
+    // });
+
+    const d = Object.assign({
+       file: addonFile
     });
+    console.log("here", d);
+    const fd = new FormData();
+    fd.append('file', document.getElementById('fileInput').files[0]);
+    console.log(fd);
+    
+     $.ajax({
+      type: "POST",
+      url: "http://localhost:8081/openmrs-standalone/ws/rest/owa/addapp",
+      data: fd,
+      contentType: false,
+      processData: false,
+      cache: false,
+      /*beforeSend: function(xhr, settings) {
+          xhr.setRequestHeader("Content-Type", "multipart/form-data;boundary=gc0p4Jq0M2Yt08jU534c0p");
+          settings.data = {name: "file", file: inputElement.files[0]};                    
+      },*/
+      success: function (result) {                        
+          if ( result.reseponseInfo == "SUCCESS" ) {
+              console.log("done");
+          } else {
+            console.log(" not done");
+          }
+      },
+      error: function (result) {
+          console.log(result.responseText);
+      }
+  });
 
   }
 
